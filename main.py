@@ -5,6 +5,7 @@ import glouton
 import random_schedule
 import local_search_descente
 import matplotlib.pyplot as plt
+import time
 
 # Fonction d'affichage pour la planification
 import matplotlib.pyplot as plt
@@ -50,6 +51,45 @@ def print_schedule(schedule, filename='schedule.png'):
     plt.savefig(filename, bbox_inches='tight')
     plt.show()  # Afficher le tableau
 
+import time  # Pour mesurer le temps d'exécution
+
+def mean_score(algo='glouton'):
+    # Nombre d'itérations
+    it = 200
+    sum_fitness = 0  # Pour stocker la somme des scores de fitness
+    total_time = 0   # Pour stocker la somme des temps d'exécution
+
+    print("Calcul de la moyenne pour " + algo + " sur " + str(it) + " itérations")
+
+    for i in range(it):
+        start_time = time.time()  # Démarre le chronomètre pour l'itération
+
+        if algo == 'glouton':
+            schedule = glouton.round_robin_schedule(8)
+        elif algo == 'random':
+            schedule = random_schedule.random_round_robin_schedule(8)
+        elif algo == 'local_search_random':
+            schedule = local_search_descente.local_search(random_schedule.random_round_robin_schedule(8), 8, max_iterations=600, verbose=False)[0]
+        elif algo == 'local_search_glouton':
+            schedule = local_search_descente.local_search(glouton.round_robin_schedule(8), 8, max_iterations=600, verbose=False)[0]
+
+        # Calculer le score de fitness
+        sum_fitness += fitness.evaluate_schedule(schedule, 8, False)
+
+        end_time = time.time()  # Arrête le chronomètre
+        total_time += (end_time - start_time)  # Ajoute le temps écoulé à la somme totale
+
+    # Moyenne des scores et des temps
+    mean_fitness = sum_fitness / it
+    mean_time = total_time / it
+
+    print(f"Temps moyen d'exécution pour {algo}: {mean_time:.5f} secondes")
+    print(f"Score moyen de fitness pour {algo}: {mean_fitness:.5f}")
+
+    return mean_fitness, mean_time
+
+            
+
 
 def main():
     num_teams = 8
@@ -59,12 +99,14 @@ def main():
     penaltyGlouton = fitness.evaluate_schedule(scheduleGlouton, num_teams, False)
     print("\n")
     print(f"GLOUTON : Score de la planification (pénalités totales): {penaltyGlouton}")
+    print_schedule(scheduleGlouton)
     
     # random
     scheduleRandom = random_schedule.random_round_robin_schedule(num_teams)
     penaltyRandom = fitness.evaluate_schedule(scheduleRandom, num_teams, False)
     print("\n")
     print(f"RANDOM : Score de la planification (pénalités totales): {penaltyRandom}")
+    print_schedule(scheduleRandom)
 
     # recherche locale
     scheduleLocal, penaltyLocal, penalty_history = local_search_descente.local_search(scheduleRandom, num_teams, max_iterations=600, verbose=True)
@@ -82,8 +124,13 @@ def main():
     plt.ylabel('Pénalités')
     plt.title('Évolution des pénalités de la recherche locale a partir d\'un random')
     plt.show()
-
     
+    # Comparaison des algorithmes
+    mean_score('glouton')
+    mean_score('random')
+    mean_score('local_search_random')
+    mean_score('local_search_glouton')
+
     
 if __name__ == "__main__":
     main()

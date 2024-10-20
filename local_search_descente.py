@@ -19,8 +19,12 @@ def local_search(schedule, num_teams, max_iterations=1000, verbose=False):
         if new_schedule[week2][period2] is None:
             new_schedule[week2][period2] = (random.randint(0, num_teams - 1), random.randint(0, num_teams - 1))
 
-        # Échanger les matchs
-        new_schedule[week1][period1], new_schedule[week2][period2] = new_schedule[week2][period2], new_schedule[week1][period1]
+        if random.random() < 0.5:
+            # Échanger les matchs
+            new_schedule[week1][period1], new_schedule[week2][period2] = new_schedule[week2][period2], new_schedule[week1][period1]
+        else:
+            new_schedule[week1][period1] = (random.randint(0, num_teams - 1), random.randint(0, num_teams - 1))
+            continue
 
         new_penalty = fitness.evaluate_schedule(new_schedule, num_teams, False)
 
