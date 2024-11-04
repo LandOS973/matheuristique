@@ -1,3 +1,6 @@
+import fitness
+
+
 def round_robin_schedule(num_teams):
     # Vérification que le nombre d'équipes est pair
     if num_teams % 2 != 0:
@@ -13,33 +16,43 @@ def round_robin_schedule(num_teams):
     # Matrice de planification : semaines x périodes (chaque cellule contiendra un match)
     schedule = [[None for _ in range(num_periods)] for _ in range(num_weeks)]
 
-    # Initialisation du compteur pour suivre les apparitions des équipes par période
+    # Dictionnaire pour suivre le nombre d'apparitions de chaque équipe dans chaque période
     appearances_per_period = {team: [0] * num_periods for team in teams}
 
-    # Algorithme glouton pour créer la planification
+    # Générer les matchs en mode glouton
     for week in range(num_weeks):
-        # Faire tourner les équipes à chaque semaine
-        round_teams = [teams[0]] + teams[week+1:] + teams[1:week+1]
+        matches_for_week = set()  # Pour suivre les équipes déjà programmées cette semaine
+        period_idx = 0
 
-        # Périodes non encore remplies pour la semaine en cours
-        period_filled = [False] * num_periods
+        for i in range(num_periods):
+            team1 = teams[i]
+            team2 = teams[num_teams - i - 1]
 
-        for i in range(len(round_teams) // 2):
-            home = round_teams[i]
-            away = round_teams[-1-i]
+            # Vérifie si les équipes peuvent être ajoutées sans conflit et sans dépasser la limite d'apparitions
+            if (team1 not in matches_for_week and team2 not in matches_for_week
+                    and appearances_per_period[team1][period_idx] < 2
+                    and appearances_per_period[team2][period_idx] < 2):
+                # Ajouter le match s'il n'y a pas de conflit et les équipes n'ont pas dépassé leur limite
+                schedule[week][period_idx] = (team1, team2)
+                matches_for_week.add(team1)
+                matches_for_week.add(team2)
 
-            # Essayer de trouver une période disponible où les deux équipes peuvent jouer
-            assigned = False
-            for period in range(num_periods):
-                # Si les équipes n'ont pas encore joué dans cette période cette semaine
-                if appearances_per_period[home][period] == 0 and appearances_per_period[away][period] == 0 and not period_filled[period]:
-                    # Assigner le match dans la période correspondante
-                    schedule[week][period] = (home, away)
+                # Mettre à jour le nombre d'apparitions des équipes dans la période
+                appearances_per_period[team1][period_idx] += 1
+                appearances_per_period[team2][period_idx] += 1
 
-                    # Mettre à jour le compteur d'apparitions pour chaque équipe dans cette période
-                    appearances_per_period[home][period] += 1
-                    appearances_per_period[away][period] += 1
-                    period_filled[period] = True  # Marquer cette période comme remplie
-                    break
+                period_idx += 1
+
+        # Rotation des équipes (sauf le premier élément)
+        teams = [teams[0]] + teams[-1:] + teams[1:-1]
 
     return schedule
+
+
+if __name__ == "__main__":
+    num_teams = 8
+    best_schedule = round_robin_schedule(num_teams)
+    print("\nÉvaluation du schedule:")
+    print(fitness.evaluate_schedule(best_schedule, num_teams, verbose=True))
+    print("\nPlanification des matchs (avec périodes):")
+    print(best_schedule)

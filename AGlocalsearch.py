@@ -3,6 +3,7 @@ import copy
 import fitness
 import random_schedule
 import local_search_descente
+import matplotlib.pyplot as plt
 
 
 def create_initial_population(pop_size, num_teams):
@@ -48,42 +49,78 @@ def simple_mutation(schedule, num_teams, mutation_rate=0.1):
     return schedule
 
 
-def genetic_algorithm(pop_size, num_teams, max_generations, local_search_iterations=100):
+def genetic_algorithm(pop_size, num_teams, max_generations, local_search_iterations=2000):
     population = create_initial_population(pop_size, num_teams)
     penalty_history = []
+    lower_penalty = float('inf')
+    best_overall_schedule = None  # To store the best schedule across all generations
 
     for generation in range(max_generations):
         fitness_scores = evaluate_population(population, num_teams)
+
+        # Update best overall schedule and penalty if a better one is found
+        generation_best_penalty = min(fitness_scores)
+        if generation_best_penalty < lower_penalty:
+            lower_penalty = generation_best_penalty
+            best_overall_schedule = population[fitness_scores.index(generation_best_penalty)]
+
+        # Store penalty history for plotting
+        penalty_history.append((generation, generation_best_penalty))
+
         parents = select_top_parents(population, fitness_scores, top_n=5)
-
-        best_penalty = min(fitness_scores)
-        penalty_history.append((generation, best_penalty))
-
         offspring = []
 
-        # Generate 5 offspring using crossover
-        while len(offspring) < 6:
+        # Generate offspring through crossover
+        while len(offspring) < pop_size // 3:
             parent1 = random.choice(parents)
             parent2 = random.choice(parents)
             child1, child2 = crossover(parent1, parent2)
             offspring.append(child1)
             offspring.append(child2)
+            # Check if these children improve the best overall schedule
+            child1_penalty = fitness.evaluate_schedule(child1, num_teams, False)
+            child2_penalty = fitness.evaluate_schedule(child2, num_teams, False)
+            if child1_penalty < lower_penalty:
+                lower_penalty = child1_penalty
+                best_overall_schedule = child1
+            if child2_penalty < lower_penalty:
+                lower_penalty = child2_penalty
+                best_overall_schedule = child2
 
-        # Generate remaining 10 offspring through mutation, followed by local search
-        while len(offspring) < 30:
+        # Generate remaining offspring through mutation and local search
+        while len(offspring) < pop_size:
             parent = random.choice(parents)
             mutated_child = copy.deepcopy(parent)
             mutated_child = simple_mutation(mutated_child, num_teams)
 
             # Apply local search to the mutated child
-            mutated_child, penality_mutated, _ = local_search_descente.local_search(mutated_child, num_teams, local_search_iterations)
+            mutated_child, penalty_mutated, _ = local_search_descente.local_search(mutated_child, num_teams,
+                                                                                   local_search_iterations)
             offspring.append(mutated_child)
+            # Check if this mutated child improves the best overall schedule
+            if penalty_mutated < lower_penalty:
+                lower_penalty = penalty_mutated
+                best_overall_schedule = mutated_child
 
+        # Update population for the next generation
         population = offspring[:pop_size]
 
-    # Final evaluation to select the best individual
-    fitness_scores = evaluate_population(population, num_teams)
-    best_index = fitness_scores.index(min(fitness_scores))
-    best_schedule = population[best_index]
-    return best_schedule, fitness_scores[best_index], penalty_history
+    # Return the best schedule across all generations and its penalty
+    return best_overall_schedule, lower_penalty, penalty_history
 
+
+if __name__ == "__main__":
+    num_teams = 12
+    best_schedule, best_penalty, penalty_history = genetic_algorithm(20, num_teams, 300)
+    print(f"Score de la planification (pénalités totales): {best_penalty}")
+    print("Meilleur schedule:", best_schedule)
+
+    # Plot the evolution of penalties
+    generations = [entry[0] for entry in penalty_history]
+    penalties = [entry[1] for entry in penalty_history]
+
+    plt.plot(generations, penalties)
+    plt.xlabel('Générations')
+    plt.ylabel('Pénalités')
+    plt.title("Évolution des pénalités dans l'algorithme génétique")
+    plt.show()
