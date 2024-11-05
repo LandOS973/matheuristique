@@ -18,8 +18,11 @@ def evaluate_population(population, num_teams):
     return [fitness.evaluate_schedule(schedule, num_teams, False) for schedule in population]
 
 
-def select_top_parents(population, fitness_scores, top_n=5):
+def select_top_parents(population, fitness_scores, top_n=5, num_teams=12):
     sorted_population = [x for _, x in sorted(zip(fitness_scores, population))]
+    # local search sur les top_n
+    for i in range(top_n):
+        sorted_population[i], penalty, _ = local_search_descente.local_search(sorted_population[i], num_teams, 1000)
     return sorted_population[:top_n]
 
 
@@ -36,20 +39,29 @@ def simple_mutation(schedule, num_teams, mutation_rate=0.1):
             if random.random() < mutation_rate:
                 if schedule[week][period] is not None:
                     home_team, away_team = schedule[week][period]
-                    if random.random() < 0.5:
-                        new_home_team = random.randint(0, num_teams - 1)
-                        while new_home_team == home_team:
+                    if random.random() < 0.3:
+                        if random.random() < 0.5:
                             new_home_team = random.randint(0, num_teams - 1)
-                        schedule[week][period] = (new_home_team, away_team)
-                    else:
-                        new_away_team = random.randint(0, num_teams - 1)
-                        while new_away_team == away_team:
+                            while new_home_team == home_team:
+                                new_home_team = random.randint(0, num_teams - 1)
+                            schedule[week][period] = (new_home_team, away_team)
+                        else:
                             new_away_team = random.randint(0, num_teams - 1)
-                        schedule[week][period] = (home_team, new_away_team)
+                            while new_away_team == away_team:
+                                new_away_team = random.randint(0, num_teams - 1)
+                            schedule[week][period] = (home_team, new_away_team)
+                    else:
+                        # Swap 2 matches
+                        week1, period1 = random.randint(0, len(schedule) - 1), random.randint(0, len(schedule[0]) - 1)
+                        week2, period2 = random.randint(0, len(schedule) - 1), random.randint(0, len(schedule[0]) - 1)
+                        stock1 = schedule[week1][period1]
+                        stock2 = schedule[week2][period2]
+                        schedule[week1][period1] = stock2
+                        schedule[week2][period2] = stock1
     return schedule
 
 
-def genetic_algorithm(pop_size, num_teams, max_generations, local_search_iterations=2000):
+def genetic_algorithm(pop_size, num_teams, max_generations):
     population = create_initial_population(pop_size, num_teams)
     penalty_history = []
     lower_penalty = float('inf')
@@ -67,7 +79,7 @@ def genetic_algorithm(pop_size, num_teams, max_generations, local_search_iterati
         # Store penalty history for plotting
         penalty_history.append((generation, generation_best_penalty))
 
-        parents = select_top_parents(population, fitness_scores, top_n=5)
+        parents = select_top_parents(population, fitness_scores, top_n=5, num_teams=num_teams)
         offspring = []
 
         # Generate offspring through crossover
@@ -92,10 +104,7 @@ def genetic_algorithm(pop_size, num_teams, max_generations, local_search_iterati
             parent = random.choice(parents)
             mutated_child = copy.deepcopy(parent)
             mutated_child = simple_mutation(mutated_child, num_teams)
-
-            # Apply local search to the mutated child
-            mutated_child, penalty_mutated, _ = local_search_descente.local_search(mutated_child, num_teams,
-                                                                                   local_search_iterations)
+            penalty_mutated = fitness.evaluate_schedule(mutated_child, num_teams, False)
             offspring.append(mutated_child)
             # Check if this mutated child improves the best overall schedule
             if penalty_mutated < lower_penalty:

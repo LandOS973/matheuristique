@@ -114,7 +114,7 @@ def tabou_search(schedule, num_teams, max_iterations=1000, tabu_tenure=50, verbo
     if verbose:
         print(f"Recherche tabou terminée après {max_iterations} itérations.")
         fitness.evaluate_schedule(best_schedule, num_teams, verbose)
-    print(tabu_list)
+        print(tabu_list)
     return best_schedule, best_penalty, penalty_history
 
 
