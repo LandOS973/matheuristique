@@ -50,10 +50,13 @@ def local_search(schedule, num_teams, max_iterations=1000, verbose=False):
     current_schedule = schedule
     current_penalty = fitness.evaluate_schedule(current_schedule, num_teams, False)
     penalty_history = [(0, current_penalty)]
+    stuck = 0
 
     for iteration in range(max_iterations):
-        if current_penalty == 0:
+        if current_penalty == 0 or stuck > 100:
             break
+
+        stuck += 1
         # Générer un voisin en échangeant deux matchs aléatoires
         new_schedule = copy.deepcopy(current_schedule)
         week1, period1 = random.randint(0, len(new_schedule) - 1), random.randint(0, len(new_schedule[0]) - 1)
@@ -78,6 +81,7 @@ def local_search(schedule, num_teams, max_iterations=1000, verbose=False):
 
         # Si le nouveau planning est meilleur, on l'adopte
         if new_penalty < current_penalty:
+            stuck = 0
             current_schedule = new_schedule
             current_penalty = new_penalty
             penalty_history.append((iteration, current_penalty))

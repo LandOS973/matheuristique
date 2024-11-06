@@ -117,21 +117,40 @@ def tabou_search(schedule, num_teams, max_iterations=1000, tabu_tenure=50, verbo
         print(tabu_list)
     return best_schedule, best_penalty, penalty_history
 
+def test_tabo_with_different_size_of_tenure():
+    num_teams = 12
+    scores = []
+    tabu_tenure = range(10, 100, 2)
+    for tenure in tabu_tenure:
+        schedule = random_schedule.random_round_robin_schedule(num_teams)
+        best_schedule, penalty, _ = tabou_search(schedule, num_teams, max_iterations=30000, tabu_tenure=tenure, verbose=False)
+        scores.append([tenure, penalty])
+        print(f"Tabou tenure: {tenure}, Penalty: {penalty}")
+    return scores
 
 if __name__ == "__main__":
-    num_teams = 12
-    schedule = random_schedule.random_round_robin_schedule(num_teams)
-    best_schedule, penalty, penalty_history = tabou_search(schedule, num_teams, max_iterations=30000, verbose=True)
-    print(f"Score de la planification (pénalités totales): {penalty}")
-    print_schedule(best_schedule)
-    print(best_schedule)
+    results = test_tabo_with_different_size_of_tenure()
 
-    # Pour tracer les pénalités
-    iterations = [entry[0] for entry in penalty_history]
-    penalties = [entry[1] for entry in penalty_history]
+    # Séparer les tailles de populations et les pénalités
+    tenur, penalty = zip(*results)
 
-    plt.plot(iterations, penalties)
-    plt.xlabel('Itérations')
-    plt.ylabel('Pénalités')
-    plt.title('Évolution des pénalités de la recherche tabou')
+    # Trouver l'indice du score de fitness le plus faible
+    min_index = penalty.index(min(penalty))
+    min_tenur = tenur[min_index]
+    min_penalty = penalty[min_index]
+
+    # Tracer la courbe des pénalités en fonction des tailles de population
+    plt.plot(tenur, penalty, label='Score de fitness')
+    plt.xlabel('Tenure')
+    plt.ylabel('Score fitness')
+    plt.title('Tabou : Influence de la longueur de la liste (12 équipes)')
+
+    # Ajouter une croix rouge au point avec le score de fitness le plus faible
+    plt.plot(min_tenur, min_penalty, 'rX', markersize=10, label='Score minimum')
+
+    # Ajouter une légende pour identifier la croix rouge
+    plt.legend()
+
+    # Afficher le graphique
     plt.show()
+

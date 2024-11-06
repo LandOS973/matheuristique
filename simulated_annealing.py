@@ -16,9 +16,10 @@ def simulated_annealing(schedule, num_teams, max_iterations=1000, initial_temp=1
     best_penalty = current_penalty
 
     temperature = initial_temp  # Température initiale
+    stuck = 0
 
     for iteration in range(max_iterations):
-        if current_penalty == 0:
+        if current_penalty == 0 or stuck > 100:
             break
         # Générer un voisin en échangeant deux matchs aléatoires
         new_schedule = copy.deepcopy(current_schedule)
@@ -44,11 +45,11 @@ def simulated_annealing(schedule, num_teams, max_iterations=1000, initial_temp=1
 
         # Calcul de la variation de pénalité
         delta_penalty = new_penalty - current_penalty
-
+        stuck += 1
         # Critère d'acceptation : meilleure solution ou selon une probabilité basée sur la température
         if delta_penalty < 0 or random.random() < math.exp(-delta_penalty / temperature):
-            current_schedule, current_penalty,_ = local_search_descente.local_search(new_schedule, num_teams, max_iterations=600, verbose=False)
-
+            current_schedule, current_penalty,_ = local_search_descente.local_search(new_schedule, num_teams, max_iterations=5000, verbose=False)
+            stuck = 0
             # Mise à jour de la meilleure solution trouvée
             if current_penalty < best_penalty:
                 best_schedule = current_schedule
@@ -73,22 +74,54 @@ def simulated_annealing(schedule, num_teams, max_iterations=1000, initial_temp=1
 
     return best_schedule, best_penalty, penalty_history
 
-
-if __name__ == "__main__":
+def test_simulated_annealing_with_differente_temperature():
     num_teams = 12
-    schedule = random_schedule.random_round_robin_schedule(num_teams)
-    schedule, penalty, penalty_history = simulated_annealing(schedule, num_teams, max_iterations=10000, verbose=True)
-    print(f"Score de la planification (pénalités totales): {penalty}")
-    print(schedule)
+    temperature = range(50, 200, 5)
+    scores = []
+    for temp in temperature:
+        schedule = random_schedule.random_round_robin_schedule(num_teams)
 
-    # Pour tracer les pénalités
-    import matplotlib.pyplot as plt
+        _, penalty, _ = simulated_annealing(schedule, num_teams, initial_temp=temp, verbose=False)
+        scores.append([temp, penalty])
+        print(f"Température : {temp}, Pénalité : {penalty}")
+    return scores
+import numpy as np
+def test_simulated_annealing_with_differente_cooling_rate():
+    num_teams = 12
+    cooling_rates = np.arange(0.8, 1, 0.01)
+    scores = []
+    for rate in cooling_rates:
+        schedule = random_schedule.random_round_robin_schedule(num_teams)
 
-    iterations = [entry[0] for entry in penalty_history]
-    penalties = [entry[1] for entry in penalty_history]
+        _, penalty, _ = simulated_annealing(schedule, num_teams, cooling_rate=rate, verbose=False)
+        scores.append([rate, penalty])
+        print(f"Taux de refroidissement : {rate}, Pénalité : {penalty}")
+    return scores
 
-    plt.plot(iterations, penalties)
-    plt.xlabel('Itérations')
-    plt.ylabel('Pénalités')
-    plt.title('Évolution des pénalités du recuit simulé sur ' + str(num_teams) + ' équipes')
+import matplotlib.pyplot as plt
+if __name__ == '__main__':
+    num_teams = 12
+    results = test_simulated_annealing_with_differente_cooling_rate()
+
+    # Séparer les tailles de populations et les pénalités
+    rate, penalty = zip(*results)
+
+    # Trouver l'indice du score de fitness le plus faible
+    min_index = penalty.index(min(penalty))
+    min_temp = rate[min_index]
+    min_penalty = penalty[min_index]
+
+    # Tracer la courbe des pénalités en fonction des tailles de population
+    plt.plot(rate, penalty, label='Score de fitness')
+    plt.xlabel('Cooling rate')
+    plt.ylabel('Score fitness')
+    plt.title('Recuit : Influence du refroidissement (12 équipes)')
+
+    # Ajouter une croix rouge au point avec le score de fitness le plus faible
+    plt.plot(min_temp, min_penalty, 'rX', markersize=10, label='Score minimum')
+
+    # Ajouter une légende pour identifier la croix rouge
+    plt.legend()
+
+    # Afficher le graphique
     plt.show()

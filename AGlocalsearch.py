@@ -5,6 +5,8 @@ import random_schedule
 import local_search_descente
 import matplotlib.pyplot as plt
 
+from simulated_annealing import simulated_annealing
+
 
 def create_initial_population(pop_size, num_teams):
     population = []
@@ -18,11 +20,8 @@ def evaluate_population(population, num_teams):
     return [fitness.evaluate_schedule(schedule, num_teams, False) for schedule in population]
 
 
-def select_top_parents(population, fitness_scores, top_n=5, num_teams=12):
+def select_top_parents(population, fitness_scores, top_n=5):
     sorted_population = [x for _, x in sorted(zip(fitness_scores, population))]
-    # local search sur les top_n
-    for i in range(top_n):
-        sorted_population[i], penalty, _ = local_search_descente.local_search(sorted_population[i], num_teams, 1000)
     return sorted_population[:top_n]
 
 
@@ -39,7 +38,7 @@ def simple_mutation(schedule, num_teams, mutation_rate=0.1):
             if random.random() < mutation_rate:
                 if schedule[week][period] is not None:
                     home_team, away_team = schedule[week][period]
-                    if random.random() < 0.3:
+                    if random.random() < 0.4:
                         if random.random() < 0.5:
                             new_home_team = random.randint(0, num_teams - 1)
                             while new_home_team == home_team:
@@ -61,66 +60,94 @@ def simple_mutation(schedule, num_teams, mutation_rate=0.1):
     return schedule
 
 
-def genetic_algorithm(pop_size, num_teams, max_generations):
+def genetic_algorithm(pop_size, num_teams, max_generations, verbose=False):
     population = create_initial_population(pop_size, num_teams)
     penalty_history = []
     lower_penalty = float('inf')
-    best_overall_schedule = None  # To store the best schedule across all generations
+    best_overall_schedule = None  # Pour stocker le meilleur planning de toutes les générations
+
+    stuck = 0
 
     for generation in range(max_generations):
         fitness_scores = evaluate_population(population, num_teams)
 
-        # Update best overall schedule and penalty if a better one is found
+        # Mettre à jour le meilleur planning global et la pénalité si un meilleur est trouvé
         generation_best_penalty = min(fitness_scores)
         if generation_best_penalty < lower_penalty:
             lower_penalty = generation_best_penalty
             best_overall_schedule = population[fitness_scores.index(generation_best_penalty)]
 
-        # Store penalty history for plotting
+        # Stocker l'historique des pénalités pour les graphiques
         penalty_history.append((generation, generation_best_penalty))
 
-        parents = select_top_parents(population, fitness_scores, top_n=5, num_teams=num_teams)
+        # Sélection des meilleurs parents
+        parents = select_top_parents(population, fitness_scores, top_n=5)
         offspring = []
 
-        # Generate offspring through crossover
-        while len(offspring) < pop_size // 3:
+        stuck += 1
+
+        if stuck > 100:
+            break
+
+        if verbose:
+            print(f"Generation {generation}: Meilleure pénalité {lower_penalty}")
+
+        # Génération de la descendance par croisement
+        while len(offspring) < pop_size // 6:
             parent1 = random.choice(parents)
             parent2 = random.choice(parents)
             child1, child2 = crossover(parent1, parent2)
             offspring.append(child1)
             offspring.append(child2)
-            # Check if these children improve the best overall schedule
+            # Vérifier si ces enfants améliorent le meilleur planning global
             child1_penalty = fitness.evaluate_schedule(child1, num_teams, False)
             child2_penalty = fitness.evaluate_schedule(child2, num_teams, False)
             if child1_penalty < lower_penalty:
                 lower_penalty = child1_penalty
                 best_overall_schedule = child1
+                stuck = 0
             if child2_penalty < lower_penalty:
                 lower_penalty = child2_penalty
                 best_overall_schedule = child2
+                stuck = 0
 
-        # Generate remaining offspring through mutation and local search
+        # Génération de la descendance restante par mutation
         while len(offspring) < pop_size:
             parent = random.choice(parents)
             mutated_child = copy.deepcopy(parent)
             mutated_child = simple_mutation(mutated_child, num_teams)
             penalty_mutated = fitness.evaluate_schedule(mutated_child, num_teams, False)
             offspring.append(mutated_child)
-            # Check if this mutated child improves the best overall schedule
+            # Vérifier si cet enfant muté améliore le meilleur planning global
             if penalty_mutated < lower_penalty:
                 lower_penalty = penalty_mutated
                 best_overall_schedule = mutated_child
+                stuck = 0
 
-        # Update population for the next generation
+        # Mettre à jour la population pour la prochaine génération
         population = offspring[:pop_size]
 
-    # Return the best schedule across all generations and its penalty
+        # Appliquer le recuit simulé aux 3 meilleurs plannings de la génération actuelle
+        fitness_scores = evaluate_population(population, num_teams)
+        sorted_population = [x for _, x in sorted(zip(fitness_scores, population))]
+        best_schedules = sorted_population[:3]
+
+        for i in range(3):
+            improved_schedule, penalty, _ = simulated_annealing(best_schedules[i], num_teams, max_iterations=300, verbose=False)
+            if penalty < fitness_scores[i]:  # Si le score s'améliore
+                population[i] = improved_schedule  # Remplace dans la population
+                if penalty < lower_penalty:  # Si c'est le meilleur global
+                    lower_penalty = penalty
+                    best_overall_schedule = improved_schedule
+                    stuck = 0
+
+    # Retourner le meilleur planning global et sa pénalité
     return best_overall_schedule, lower_penalty, penalty_history
 
 
 if __name__ == "__main__":
     num_teams = 12
-    best_schedule, best_penalty, penalty_history = genetic_algorithm(20, num_teams, 300)
+    best_schedule, best_penalty, penalty_history = genetic_algorithm(200, num_teams, 1000, verbose=True)
     print(f"Score de la planification (pénalités totales): {best_penalty}")
     print("Meilleur schedule:", best_schedule)
 
