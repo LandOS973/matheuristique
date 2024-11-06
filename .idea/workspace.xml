@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ff8c6f11-5ff3-4eab-99aa-79662c89da31" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/rapport.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/git_toolbox_blame.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/matheuristique.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/matheuristique-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/10teams.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/12teams.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/8teams.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/AG simple 8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/Result algo 8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/agsimplepopulation12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recherche_local_glouton.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recherche_local_random.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recherchelocal_glouton_modified.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recherchelocal_random_modified.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recuit glouton 8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recuitcooling12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/recuittemp12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/tabou 8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph/time 8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique.aux" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/matheuristique.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique.out" beforeDir="false" afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique.tex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_10_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_10_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_11_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_11_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_12_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_12_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_3_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_4_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_5_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_5_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_6_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_6_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_7_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_7_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_8_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_8_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_9_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/matheuristique_files/matheuristique_9_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/missfont.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/schedule.png" beforeDir="false" afterPath="$PROJECT_DIR$/schedule.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.tex" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2oUfSR4tyHxSanRBRYR4eK09sbZ" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="openDirectoriesWithSingleClick" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="sortKey" value="BY_TIME_DESCENDING" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.22855.92" />
+        <option value="bundled-python-sdk-b068d85d1acf-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.22855.92" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ff8c6f11-5ff3-4eab-99aa-79662c89da31" name="Changes" comment="" />
+      <created>1730929076460</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1730929076460</updated>
+      <workItem from="1730929078069" duration="59000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
