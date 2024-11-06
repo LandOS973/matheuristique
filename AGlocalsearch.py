@@ -133,7 +133,7 @@ def genetic_algorithm(pop_size, num_teams, max_generations, verbose=False):
         best_schedules = sorted_population[:3]
 
         for i in range(3):
-            improved_schedule, penalty, _ = simulated_annealing(best_schedules[i], num_teams, max_iterations=300, verbose=False)
+            improved_schedule, penalty, _ = local_search_descente.local_search(best_schedules[i], num_teams, max_iterations=300, verbose=False)
             if penalty < fitness_scores[i]:  # Si le score s'améliore
                 population[i] = improved_schedule  # Remplace dans la population
                 if penalty < lower_penalty:  # Si c'est le meilleur global

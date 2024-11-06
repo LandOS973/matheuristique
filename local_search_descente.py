@@ -53,7 +53,7 @@ def local_search(schedule, num_teams, max_iterations=1000, verbose=False):
     stuck = 0
 
     for iteration in range(max_iterations):
-        if current_penalty == 0 or stuck > 100:
+        if current_penalty == 0 or stuck > 5000:
             break
 
         stuck += 1

@@ -42,10 +42,9 @@ def simulated_annealing(schedule, num_teams, max_iterations=1000, initial_temp=1
                 continue
 
         new_penalty = fitness.evaluate_schedule(new_schedule, num_teams, False)
-
+        stuck += 1
         # Calcul de la variation de pénalité
         delta_penalty = new_penalty - current_penalty
-        stuck += 1
         # Critère d'acceptation : meilleure solution ou selon une probabilité basée sur la température
         if delta_penalty < 0 or random.random() < math.exp(-delta_penalty / temperature):
             current_schedule, current_penalty,_ = local_search_descente.local_search(new_schedule, num_teams, max_iterations=5000, verbose=False)
